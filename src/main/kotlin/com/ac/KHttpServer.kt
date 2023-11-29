@@ -7,17 +7,16 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class HttpServer (private val port: Int) {
+class KHttpServer (private val port: Int) {
 
-    private var routes: MutableMap<String, RequestRunner> = mutableMapOf()
-    private lateinit var socket: ServerSocket
-    private var threadPool: ExecutorService = Executors.newFixedThreadPool(100)
-    private var handler: HttpHandler = HttpHandler(routes)
+    private val routes: MutableMap<String, RequestRunner> = mutableMapOf()
+    private val socket = ServerSocket(port)
+    private val threadPool: ExecutorService = Executors.newFixedThreadPool(100)
+    private val handler: HttpHandler = HttpHandler(routes)
 
     private lateinit var mainThread: Thread
 
     fun start () {
-        socket = ServerSocket(port)
         mainThread = Thread {
             println("Server started on port: $port")
             while (true) {
@@ -46,7 +45,7 @@ class HttpServer (private val port: Int) {
         threadPool.execute(httpRequestRunner)
     }
 
-    fun addRoute(opCode: HttpMethod, route: String, runner: RequestRunner) : HttpServer {
+    fun addRoute(opCode: HttpMethod, route: String, runner: RequestRunner) : KHttpServer {
         routes[opCode.name.plus(route)] = runner
         return this
     }

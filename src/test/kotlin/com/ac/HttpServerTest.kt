@@ -8,7 +8,7 @@ class HttpServerTest {
 
     @Test
     fun testHttpServerOK() {
-        val server = HttpServer(8080)
+        val server = KHttpServer(8080)
             .addRoute(HttpMethod.GET, "/") {
                 HttpResponse.ok("works")
             }
@@ -28,7 +28,7 @@ class HttpServerTest {
 
     @Test
     fun testHttpServerNotFound() {
-        val server = HttpServer(8080)
+        val server = KHttpServer(8080)
         server.start()
 
         val response = khttp.get("http://localhost:8080")

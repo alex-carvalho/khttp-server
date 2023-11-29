@@ -14,7 +14,7 @@ data class HttpResponse (val status : HttpStatusCode, val entity: Any?, val resp
 
     init {
         responseHeaders["Date"] = listOf(DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneOffset.UTC)))
-        responseHeaders["Sever"] = listOf("KotlinServer")
+        responseHeaders["Server"] = listOf("KotlinServer")
     }
 
     fun writeTo(outputStream: BufferedWriter) {
