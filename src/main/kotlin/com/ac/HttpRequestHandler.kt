@@ -7,7 +7,7 @@ import java.util.function.Function
 
 typealias RequestRunner = Function<HttpRequest, HttpResponse>
 
-class HttpHandler (private val routes: Map<String, RequestRunner>) {
+class HttpRequestHandler (private val routes: Map<String, RequestRunner>) {
 
     fun handleConnection(inputStream: InputStream, outputStream: OutputStream) {
         val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))

@@ -19,7 +19,7 @@ class HttpServerTest {
 
         assertEquals(200, response.statusCode)
         assertEquals("works", response.text)
-        assertEquals("KotlinServer", response.headers["Sever"])
+        assertEquals("KotlinServer", response.headers["Server"])
         assertEquals("5", response.headers["Content-Length"])
         assertNotNull(response.headers["Date"])
 
@@ -35,7 +35,7 @@ class HttpServerTest {
 
         assertEquals(404, response.statusCode)
         assertEquals("Route Not Found...", response.text)
-        assertEquals("KotlinServer", response.headers["Sever"])
+        assertEquals("KotlinServer", response.headers["Server"])
         assertEquals("18", response.headers["Content-Length"])
         assertNotNull(response.headers["Date"])
 

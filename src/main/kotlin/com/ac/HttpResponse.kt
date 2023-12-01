@@ -24,16 +24,18 @@ data class HttpResponse (val status : HttpStatusCode, val entity: Any?, val resp
 
 private fun writeResponse(outputStream: BufferedWriter, response: HttpResponse) {
     try {
-        outputStream.write("HTTP/1.1 ${response.status.code} ${response.status.statusMessage}  \r\n")
+        val breadLine = "\r\n"
+
+        outputStream.write("HTTP/1.1 ${response.status.code} ${response.status.statusMessage}  $breadLine")
         writeHeaders(outputStream, response.responseHeaders)
 
         val entityString = response.entity?.toString();
 
         if (entityString.isNullOrEmpty()) {
-            outputStream.write("\r\n")
+            outputStream.write(breadLine)
         } else {
-            outputStream.write("Content-Length: " + entityString.length + "\r\n")
-            outputStream.write("\r\n")
+            outputStream.write("Content-Length: " + entityString.length + breadLine)
+            outputStream.write(breadLine)
             outputStream.write(entityString)
         }
     } catch (e: Exception) {

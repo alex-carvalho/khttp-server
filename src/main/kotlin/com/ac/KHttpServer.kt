@@ -1,18 +1,16 @@
 package com.ac
 
-import java.io.IOException
+import com.ac.handler.HttpServerWorker
+import com.ac.handler.ThreadPoolHttpServerWorker
 import java.net.ServerSocket
 import java.net.Socket
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 
-class KHttpServer (private val port: Int) {
+class KHttpServer (private val port: Int, private val worker: HttpServerWorker = ThreadPoolHttpServerWorker()) {
 
     private val routes: MutableMap<String, RequestRunner> = mutableMapOf()
     private val socket = ServerSocket(port)
-    private val threadPool: ExecutorService = Executors.newFixedThreadPool(100)
-    private val handler: HttpHandler = HttpHandler(routes)
+    private val handler: HttpRequestHandler = HttpRequestHandler(routes)
 
     private lateinit var mainThread: Thread
 
@@ -30,28 +28,19 @@ class KHttpServer (private val port: Int) {
 
     fun stop () {
         mainThread.interrupt()
-        threadPool.shutdownNow()
+        worker.stop()
         socket.close()
     }
 
     private fun handleConnection(clientConnection: Socket) {
-        val httpRequestRunner = Runnable {
-            try {
-                handler.handleConnection(clientConnection.getInputStream(), clientConnection.getOutputStream())
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        threadPool.execute(httpRequestRunner)
+        worker.handleConnection(clientConnection, handler)
     }
 
     fun addRoute(opCode: HttpMethod, route: String, runner: RequestRunner) : KHttpServer {
         routes[opCode.name.plus(route)] = runner
         return this
     }
-
 }
-
 
 enum class HttpMethod {
     GET,
