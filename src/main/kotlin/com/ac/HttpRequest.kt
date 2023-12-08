@@ -1,9 +1,11 @@
 package com.ac
 
+import java.io.ByteArrayOutputStream
+import java.io.CharArrayWriter
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.URI
-import java.util.*
+
 
 data class HttpRequest(val httpMethod: HttpMethod, val uri: URI, val requestHeaders: Map<String, List<String>>) {
     companion object {
@@ -37,15 +39,8 @@ private fun readMessage(inputStream: InputStream): List<String> {
         }
         val inBuffer = CharArray(inputStream.available())
         val inReader = InputStreamReader(inputStream)
-        val read: Int = inReader.read(inBuffer)
-        val message: MutableList<String> = ArrayList()
-        Scanner(String(inBuffer)).use { sc ->
-            while (sc.hasNextLine()) {
-                val line: String = sc.nextLine()
-                message.add(line)
-            }
-        }
-        message
+        inReader.read(inBuffer)
+        String(inBuffer).lines()
     } catch (e: Exception) {
         throw RuntimeException(e)
     }

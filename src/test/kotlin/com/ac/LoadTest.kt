@@ -1,7 +1,9 @@
 package com.ac
 
 import org.junit.jupiter.api.Test
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -24,12 +26,13 @@ class LoadTest {
         val commands = arrayOf("k6", "run", absolutePath)
         val process = rt.exec(commands)
 
-        for ( i in 0 .. 20) {
-            if(!process.isAlive) break
-            Thread.sleep(1000)
+        val stdInput = BufferedReader(InputStreamReader(process.inputStream))
+
+        var s: String?
+        while (stdInput.readLine().also { s = it } != null) {
+            println(s)
         }
 
-        print(String(process.inputStream.readAllBytes(), StandardCharsets.UTF_8))
         print(String(process.errorStream.readAllBytes(), StandardCharsets.UTF_8))
     }
 }

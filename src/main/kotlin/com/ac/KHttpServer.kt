@@ -18,8 +18,8 @@ class KHttpServer (private val port: Int, private val worker: HttpServerWorker =
         mainThread = Thread {
             println("Server started on port: $port")
             while (true) {
-                val clientConnection = socket.accept()
-                handleConnection(clientConnection)
+                val socket = socket.accept()
+                handleConnection(socket)
             }
         }
 

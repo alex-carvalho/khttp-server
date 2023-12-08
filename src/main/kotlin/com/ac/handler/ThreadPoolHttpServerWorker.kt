@@ -13,10 +13,10 @@ class ThreadPoolHttpServerWorker : HttpServerWorker {
         threadPool.shutdownNow()
     }
 
-    override fun handleConnection(clientConnection: Socket, httpRequestHandler: HttpRequestHandler) {
+    override fun handleConnection(socket: Socket, httpRequestHandler: HttpRequestHandler) {
         val httpRequestRunner = Runnable {
             try {
-                httpRequestHandler.handleConnection(clientConnection.getInputStream(), clientConnection.getOutputStream())
+                httpRequestHandler.handleConnection(socket)
             } catch (e: IOException) {
                 e.printStackTrace()
             }

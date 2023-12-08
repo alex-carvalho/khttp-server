@@ -6,5 +6,5 @@ import java.net.Socket
 interface HttpServerWorker {
 
     fun stop();
-    fun handleConnection(clientConnection: Socket, httpRequestHandler: HttpRequestHandler);
+    fun handleConnection(socket: Socket, httpRequestHandler: HttpRequestHandler);
 }
