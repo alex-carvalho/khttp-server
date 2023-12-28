@@ -1,16 +1,21 @@
 package com.ac
 
-import java.io.ByteArrayOutputStream
-import java.io.CharArrayWriter
+import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.URI
+import java.nio.ByteBuffer
+import java.nio.channels.ReadableByteChannel
 
 
 data class HttpRequest(val httpMethod: HttpMethod, val uri: URI, val requestHeaders: Map<String, List<String>>) {
     companion object {
         fun decode(inputStream: InputStream): HttpRequest {
             return buildRequest(readMessage(inputStream))
+        }
+
+        fun decode(channel: ReadableByteChannel): HttpRequest {
+            return buildRequest(readMessage(channel))
         }
     }
 }
@@ -44,6 +49,32 @@ private fun readMessage(inputStream: InputStream): List<String> {
     } catch (e: Exception) {
         throw RuntimeException(e)
     }
+}
+
+private fun readMessage(channel: ReadableByteChannel): List<String> {
+    val readBuffer: ByteBuffer = ByteBuffer.allocate(32768)
+
+    val sb = StringBuilder()
+    readBuffer.clear()
+    var read: Int
+    var totalRead = 0
+    while (channel.read(readBuffer).also { read = it } > 0) {
+        totalRead += read
+        if (totalRead > 8192) {
+            throw IOException("Request data limit exceeded")
+        }
+        readBuffer.flip()
+        val bytes = ByteArray(readBuffer.limit())
+        readBuffer.get(bytes)
+        sb.append(String(bytes))
+        readBuffer.clear()
+    }
+
+    if (read < 0) {
+        throw IOException("End of input stream. Connection is closed by the client")
+    }
+
+    return sb.toString().lines()
 }
 
 private fun addRequestHeaders(message: List<String>):  MutableMap<String, List<String>> {

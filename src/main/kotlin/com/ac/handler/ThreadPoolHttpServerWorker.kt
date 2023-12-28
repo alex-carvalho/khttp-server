@@ -6,11 +6,11 @@ import java.net.Socket
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ThreadPoolHttpServerWorker : HttpServerWorker {
+class ThreadPoolHttpServerWorker(
+    private val executor: ExecutorService = Executors.newFixedThreadPool(100)) : HttpServerWorker {
 
-    private val threadPool: ExecutorService = Executors.newFixedThreadPool(100)
     override fun stop() {
-        threadPool.shutdownNow()
+        executor.shutdownNow()
     }
 
     override fun handleConnection(socket: Socket, httpRequestHandler: HttpRequestHandler) {
@@ -21,6 +21,6 @@ class ThreadPoolHttpServerWorker : HttpServerWorker {
                 e.printStackTrace()
             }
         }
-        threadPool.execute(httpRequestRunner)
+        executor.execute(httpRequestRunner)
     }
 }

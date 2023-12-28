@@ -13,15 +13,6 @@ class HttpRequestHandler (private val routes: Map<String, RequestRunner>) {
         val inputStream = socket.getInputStream()
         val outputStream = socket.getOutputStream()
 
-        socket.soTimeout = 3000
-
-//        println(socket.getReceiveBufferSize())
-//
-//        if(socket.getInputStream().available() == 0) {
-//            println("available() == 0")
-//        }
-
-
         val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))
         val request: HttpRequest = HttpRequest.decode(inputStream)
         handleRequest(request, bufferedWriter)

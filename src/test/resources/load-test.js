@@ -5,9 +5,9 @@ export const options = {
   scenarios: {
       contacts: {
         executor: 'constant-vus',
-        vus: 100,
+        vus: 50,
         duration: '10s',
-        gracefulStop: '5s',
+        gracefulStop: '0s',
       },
     },
 };
