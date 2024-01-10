@@ -1,6 +1,8 @@
 package com.ac.nio
 
 import com.ac.*
+import com.ac.io.HttpMethod
+import com.ac.io.HttpStatusCode
 import java.net.InetSocketAddress
 import java.nio.channels.SelectionKey
 import java.nio.channels.Selector
@@ -28,7 +30,7 @@ class KHttpServerNIO(private val port: Int) {
         serverChannel.configureBlocking(false)
         serverChannel.socket().bind(InetSocketAddress(port))
         serverChannel.register(selector, SelectionKey.OP_ACCEPT)
-
+        println("Server started on port: $port")
     }
 
     private fun stop() {
@@ -44,31 +46,27 @@ class KHttpServerNIO(private val port: Int) {
 
     private fun startLoop() {
         while (true) {
-            handleLoopTick()
-        }
-    }
-
-    private fun handleLoopTick() {
-        selector.select()
-        val keys = selector.selectedKeys()
-        val keyIterator = keys.iterator()
-        while (keyIterator.hasNext()) {
-            val key = keyIterator.next()
-            keyIterator.remove()
-            try {
-                if (!key.isValid) {
-                    continue
+            selector.select()
+            val keys = selector.selectedKeys()
+            val keyIterator = keys.iterator()
+            while (keyIterator.hasNext()) {
+                val key = keyIterator.next()
+                keyIterator.remove()
+                try {
+                    if (!key.isValid) {
+                        continue
+                    }
+                    if (key.isAcceptable) {
+                        accept()
+                    } else if (key.isReadable) {
+                        read(key)
+                    } else if (key.isWritable) {
+                        write(key)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    closeChannelSilently(key)
                 }
-                if (key.isAcceptable) {
-                    accept()
-                } else if (key.isReadable) {
-                    read(key)
-                } else if (key.isWritable) {
-                    write(key)
-                }
-            } catch (e: Exception) {
-               e.printStackTrace()
-                closeChannelSilently(key)
             }
         }
     }

@@ -1,12 +1,13 @@
-package com.ac
+package com.ac.io
+
+import com.ac.HttpRequest
+import com.ac.HttpResponse
 import java.io.BufferedWriter
-import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.net.Socket
 import java.util.function.Function
 
 typealias RequestRunner = Function<HttpRequest, HttpResponse>
-
 class HttpRequestHandler (private val routes: Map<String, RequestRunner>) {
 
     fun handleConnection(socket: Socket) {
@@ -31,4 +32,3 @@ class HttpRequestHandler (private val routes: Map<String, RequestRunner>) {
         }
     }
 }
-

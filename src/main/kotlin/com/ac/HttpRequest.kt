@@ -1,5 +1,6 @@
 package com.ac
 
+import com.ac.io.HttpMethod
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -52,7 +53,7 @@ private fun readMessage(inputStream: InputStream): List<String> {
 }
 
 private fun readMessage(channel: ReadableByteChannel): List<String> {
-    val readBuffer: ByteBuffer = ByteBuffer.allocate(32768)
+    val readBuffer: ByteBuffer = ByteBuffer.allocate(10240)
 
     val sb = StringBuilder()
     readBuffer.clear()
